@@ -1,0 +1,42 @@
+// 常量动态数据 rootProject.ext.springBootVersion
+ext {
+//    // 环境属性
+//    sourceCompiler = '17'
+//    targetCompiler = '17'
+//    encoding = 'UTF-8'
+//    // 公共常量版本
+//    project = [
+//        groupName: 'com.wcc.reach',
+//        versionName: '1.1-SNAPSHOT'
+//    ]
+    // 业务版本
+    businessVersion = '1.0.0'
+
+    // springBoot 配置依赖
+    gradleBootVersion = '3.0.2'
+    springBootVersion = '3.0.2'
+    // SpringCloud 配置依赖
+    springCloudVersion = '2022.0.4'
+    // SpringCloudAlibaba 配置依赖
+    springCloudAlibabVersion = '2022.0.0.0'
+
+    // springBoot 其他依赖
+    bootMybatisPlusVersion = '3.5.2'
+    bootMapperVersion = '4.2.0'
+    bootDruidVersion = '1.2.14'
+
+    // other 依赖版本
+    lombokVersion = '1.18.24'
+    fastjsonVersion = '2.0.46'
+    hutoolVersion = '5.8.9'
+    junitJupiterVersion = '5.8.0'
+    mysqlVersion = '8.0.30'
+    druidVersion = '1.2.14'
+
+    //依赖版本控制另一种写法
+//    dependVsesion {}
+//    dependGroup {}
+
+}
+
+

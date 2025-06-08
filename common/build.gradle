@@ -1,0 +1,11 @@
+plugins {
+    id("java")
+}
+
+dependencies {
+    implementation "com.alibaba.fastjson2:fastjson2"
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -1,0 +1,36 @@
+plugins {
+    id 'java-library'
+}
+
+dependencies {
+    //业务模块依赖
+    api project(":common")
+    //测试依赖
+    testImplementation 'org.junit.jupiter:junit-jupiter-api'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+    //框架依赖
+    implementation 'org.springframework.boot:spring-boot-devtools'
+    implementation 'org.springframework.boot:spring-boot-configuration-processor'
+    implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework.boot:spring-boot-starter-test'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    //切换web服务器：tomcat（默认）、jetty、undertow(jboss)、webflux(netty)
+    implementation 'org.springframework.boot:spring-boot-starter-undertow'
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+//    implementation 'com.alibaba.cloud:spring-cloud-starter-alibaba-nacos-config'
+    //第三方依赖
+//    implementation 'com.alibaba:druid-spring-boot-starter'
+//    implementation 'com.baomidou:mybatis-plus-boot-starter'
+//    runtimeOnly 'mysql:mysql-connector-java'
+//    implementation 'tk.mybatis:mapper-spring-boot-starter'
+//    implementation 'com.baomidou:mybatis-plus-generator'
+}
+// 排除所有依赖
+configurations.all {
+    exclude module: 'spring-boot-starter-tomcat'
+}
+
+test {
+    useJUnitPlatform()
+}
+

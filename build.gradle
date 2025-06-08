@@ -1,0 +1,146 @@
+// buildscript、allprojects、subprojects 内容几乎一样，代表内容不一样
+// buildscript 构建脚本（老式插件应用方式）：声明 gradle 脚本自身需要使用的资源。即gradle需要的资源，跟module没有关系。当然可以声明的资源包括依赖项、第三方插件、maven仓库地址等
+buildscript {
+//    // 常量方法1：ext 定义动态数据常量
+//    ext {
+//        gradleBootVersion = '2.7.5'
+////        springBootVersion = '2.7.5'
+//    }
+//    ext ['thymeleaf.version'] = '3.0.3.RELEASE'
+    // 常量方法2：配置文件加载
+    apply from: './version.gradle'
+    // 仓库位置
+    repositories {
+        // 本地仓库
+        mavenLocal()
+        // 优先 使用国内仓库
+        maven {url('https://maven.aliyun.com/repository/public')}
+        maven {url('https://maven.aliyun.com/nexus/content/groups/public')}
+        // 中央仓库
+        mavenCentral()
+    }
+    // 依赖组件地址
+    dependencies {
+        // gradle 打包工具插件：统一管理spring boot和dependency-management版本控制
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${gradleBootVersion}")
+    }
+}
+
+// 插件配置：可以一起配置，也可以单独一个个配置；插件配置推荐使用apply，不使用旧版的 plugins
+// 插件有：java、java-library、io.spring.dependency-management、maven-publish、org.springframework.boot
+//       java-platform、war
+plugins {//格式：id '插件名' version '版本号'
+    id 'java-library'
+//    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+//    id 'org.springframework.boot' version '2.7.5'
+}
+//apply plugin: 'java-library' //提供api工具使用，依赖项可以导出给使用者，用于编译和运行;java的升级版，包含java的功能
+//apply plugin: 'io.spring.dependency-management' //版本控制工具，类似与maven的dependencyManagement
+//apply plugin: 'org.springframework.boot' //springBoot插件，统一管理版本号
+//apply plugin: 'maven-publish' //maven打包工具插件
+//apply plugin: 'jacoco' //用于代码覆盖率检查，帮助确保代码质量
+//apply plugin: 'checkstyle' //用于代码风格检查，确保代码符合规范
+//apply plugin: 'findbugs' //用于静态代码分析，帮助发现潜在的bug和代码质量问题
+apply plugin: 'java-library'
+
+// 项目组和版本号
+group 'com.wcc.gtemp'
+version '1.0-SNAPSHOT'
+// 环境：JAVA 版本 JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+//// 仓库位置
+//repositories {
+//    mavenLocal()
+//    maven {url('https://maven.aliyun.com/repository/public')}
+//    maven {url('https://maven.aliyun.com/nexus/content/groups/public')}
+//    mavenCentral()
+//}
+//// 引入依赖组件
+//dependencies {}
+//test {}
+//// 打包配置
+//bootJar {
+////    mainClass.set('')
+//}
+// 全局配置项
+configurations.all {
+        //    //排除所有依赖
+//    exclude module: ''
+        //当遇到版本冲突时直接构建失败。因为默认冲突会使用最新的依赖版本，会正常构建。
+    Configuration configuration ->
+        configuration.resolutionStrategy.failOnVersionConflict()
+}
+
+// allprojects 构建脚本：所有模块（项目）通用配置。即每个module都需要相同的依赖项、插件等资源。
+allprojects {
+    // 项目组和版本号
+    group 'com.wcc.gtemp'
+    //version '1.0-SNAPSHOT'
+    version "${businessVersion}"
+    // 环境：JAVA 版本
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+    // 指定编码格式
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+    // 指定编码格式
+    tasks.withType(JavaCompile) {
+        options.encoding = "UTF-8"
+    }
+    // 仓库位置
+    repositories {
+        // 本地仓库
+        mavenLocal()
+        // 优先 使用国内仓库
+        maven {url('https://maven.aliyun.com/repository/public')}
+        maven {url('https://maven.aliyun.com/nexus/content/groups/public')}
+        // 中央仓库
+        mavenCentral()
+        google()
+    }
+}
+// subprojects 构建脚本：子模块（项目）统一配置,不包括根目录。
+subprojects {
+    apply plugin: 'java-library'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+    apply plugin: 'jacoco' //用于代码覆盖率检查，帮助确保代码质量；需要额外配置；
+//    apply plugin: 'checkstyle' //用于代码风格检查，确保代码符合规范；需要额外添加配置；
+    // 常量定义：配置文件加载 apply from: '../version.gradle'
+    // 公共依赖
+    dependencies {
+        compileOnly "org.projectlombok:lombok:${lombokVersion}"
+        annotationProcessor "org.projectlombok:lombok:${lombokVersion}"
+        implementation "cn.hutool:hutool-all:${hutoolVersion}"
+    }
+    // 版本控制依赖
+    dependencyManagement {
+        // 版本控制
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+            mavenBom "com.alibaba.cloud:spring-cloud-alibaba-dependencies:${springCloudAlibabVersion}"
+        }
+        dependencies {
+            //业务模块 依赖
+//            project(":common")
+
+            //SpringBoot 三方整合依赖
+            dependency "com.alibaba:druid-spring-boot-starter:${bootDruidVersion}"
+            dependency "tk.mybatis:mapper-spring-boot-starter:${bootMapperVersion}"
+            dependency "com.baomidou:mybatis-plus-boot-starter:${bootMybatisPlusVersion}"
+            dependency "com.baomidou:mybatis-plus-generator:${bootMybatisPlusVersion}"
+            //其他依赖 第三方依赖
+            dependency "org.projectlombok:lombok:${lombokVersion}"
+            dependency "com.alibaba.fastjson2:fastjson2:${fastjsonVersion}"
+        }
+    }
+}
+////单独定义子项目依赖(不推荐)，依赖版本号必须写(变量或确定值)
+//project("common"){
+//    apply plugin: 'java'
+////    apply from: '../version.gradle'
+//    dependencies {
+//        implementation "cn.hutool:hutool-all:${hutoolVersion}"
+//    }
+//}
+
