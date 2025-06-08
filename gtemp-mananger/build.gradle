@@ -24,6 +24,7 @@ dependencies {
 //    runtimeOnly 'mysql:mysql-connector-java'
 //    implementation 'tk.mybatis:mapper-spring-boot-starter'
 //    implementation 'com.baomidou:mybatis-plus-generator'
+
 }
 // 排除所有依赖
 configurations.all {
