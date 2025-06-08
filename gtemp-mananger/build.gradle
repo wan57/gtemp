@@ -26,6 +26,7 @@ dependencies {
 //    implementation 'com.baomidou:mybatis-plus-generator'
 
 }
+
 // 排除所有依赖
 configurations.all {
     exclude module: 'spring-boot-starter-tomcat'
